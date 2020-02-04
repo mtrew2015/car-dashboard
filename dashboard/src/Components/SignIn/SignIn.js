@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import './SignIn.scss';
 import {useHistory} from 'react-router-dom';
 
-export default function App(props) {
+export default function SignIn(props) {
   const { register, handleSubmit, errors } = useForm()
   const [signInError, setSignInError] = useState(false)
   const history = useHistory();

@@ -4,14 +4,21 @@ import './App.scss';
 import SignIn from './Components/SignIn/SignIn';
 import Dashboard from './Components/Dashboard/Dashboard';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
+import AddCar from './Components/AddCar/AddCar';
 
-function App() {
+function App(props) {
+    const [carList, setCarList] = useState([]);
 	return (
 		<div className='App'>
 			<Route path='/' exact>
 				<SignIn />
-			</Route>
-			<PrivateRoute exact path='/dashboard' component={Dashboard} />
+            </Route>
+            <Route path="/dashboard">
+                <Dashboard carList={carList} setCarList={setCarList}/>
+            </Route>
+            <Route path="/add">
+                <AddCar carList={carList} setCarList={setCarList}/>
+            </Route>
 		</div>
 	);
 }
