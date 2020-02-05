@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { useForm } from 'react-hook-form';
 import './SignIn.scss';
-import {useHistory} from 'react-router-dom';
+import {useHistory, Redirect} from 'react-router-dom';
 
 export default function SignIn(props) {
   const { register, handleSubmit, errors } = useForm()
@@ -19,6 +19,9 @@ export default function SignIn(props) {
       }
   }
    
+  if(localStorage.getItem("token")){
+     return <Redirect to="/dashboard/"/>
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <input placeholder="username" name="username" ref={ register({ required:true, pattern: /^[a-z0-9_-]*$/i})}/>
