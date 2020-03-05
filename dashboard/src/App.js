@@ -7,7 +7,7 @@ import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 import AddCar from './Components/AddCar/AddCar';
 import EditCar from './Components/EditCar/EditCar';
 
-function App(props) {
+function App() {
 	const [ carList, setCarList ] = useState([]);
 	return (
 		<div className='App'>

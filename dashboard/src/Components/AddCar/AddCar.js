@@ -3,20 +3,20 @@ import { useForm } from 'react-hook-form';
 import './AddCar.scss';
 import {useHistory} from 'react-router-dom';
 import {server} from '../../axios';
+import {addCar} from '../../Actions/index'
+import {useDispatch} from 'react-redux';
 
 
-export default function SignIn(props) {
+ function SignIn(props) {
   const { register, handleSubmit, errors } = useForm()
   const history = useHistory();
+  const dispatch = useDispatch()
   
-  const onSubmit = data => {
+  const onSubmit = async data => {
       const car = data
       console.log(car)
-    server
-        .post('/cars', car)
-        .then(res => console.log(res))
-        .then(history.push('/dashboard'))
-        .catch(err => console.log(err))
+      dispatch(addCar(car))
+      history.push('/dashboard')
   }
    
   return (
@@ -39,3 +39,5 @@ export default function SignIn(props) {
     </form>
   );
 }
+
+export default SignIn

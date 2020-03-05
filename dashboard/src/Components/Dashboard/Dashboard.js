@@ -1,60 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './Dashboard.scss';
-import { server } from '../../axios';
 import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Table } from 'reactstrap';
-import {useToggle} from '../../hooks';
+import { useToggle } from '../../hooks';
+import {  useSelector, useDispatch } from 'react-redux';
+import { getCars } from '../../Actions';
 
 function Dashboard(props) {
-    const [initial, setInitial] = useState(false)
-	console.log(props);
-	const { carList, setCarList } = props;
-	const [ cars, setCars ] = useState([]);
-    const history = useHistory();
-    const [toggle, setToggle] = useToggle();
+	const history = useHistory();
+	const dispatch = useDispatch();
+	const state = useSelector((state) => state);
+    const { cars, loading } = state.carReducer;
+    const {error} = state.errorReducer; 
 
-    console.log(carList, 'carList');
-    console.log(cars, 'cars')
-	useEffect(
-		() => {
-			server
-				.get('/cars')
-				.then((res) => {
-					setCars(res.data);
-					setCarList(res.data);
-				})
-				.catch((err) => console.log(err));
-		},
-		[ setCarList],
-    );
-    
-    const handleDelete = (id) => {
-		server
-			.delete(`/cars/${id}`)
-			.then((res) => console.log(res))
-			.then(() => {
-				const filtered = cars.filter((car) => {
-					return car._id !== id;
-				});
-				setCars(filtered);
-			})
-			.catch((err) => console.log(err));
-    };
-    
-    const sort = (column) => {
-        const sorted = cars.sort((a,b) => {
-            console.log(a[column], b[column])
-             a = parseInt(a[column])
-             b = parseInt(b[column])
-             setToggle()
-             return toggle ? a-b : b-a
-        })
-        setCars([...sorted])
-        setCarList([...sorted])
-    }
+	useEffect(() => {
+		dispatch(getCars());
+	}, []);
+
+	// const handleDelete = (id) => {
+	// 	server
+	// 		.delete(`/cars/${id}`)
+	// 		.then((res) => console.log(res))
+	// 		.then(() => {
+	// 			const filtered = cars.filter((car) => {
+	// 				return car._id !== id;
+	// 			});
+	// 			setCars(filtered);
+	// 		})
+	// 		.catch((err) => console.log(err));
+	// };
+
+	// const sort = (column) => {
+	//     const sorted = cars.sort((a,b) => {
+	//         console.log(a[column], b[column])
+	//          a = parseInt(a[column])
+	//          b = parseInt(b[column])
+	//          setToggle()
+	//          return toggle ? a-b : b-a
+	//     })
+	//     setCars([...sorted])
+	//     setCarList([...sorted])
+    // }
 	return (
-		<div className="dash-wrapper">
+		<div className='dash-wrapper'>
 			<h1>Dashboard</h1>
 			<Link to='/add'>Add Car</Link>
 			<button
@@ -72,39 +61,37 @@ function Dashboard(props) {
 							return accumulator + Number(item.price);
 						}, 0)
 						.toLocaleString('USD')}
-                </p>
+				</p>
 			</div>
-			<div className='currentInventory'>
+            <div className='currentInventory'>
+                {error && <p>{error}</p>}
 				<Table dark className='table'>
 					<thead>
 						<tr className='table-row'>
-							<th onClick={() => sort("year")}>Year</th>
+							<th>Year</th>
 							<th>Make</th>
-                            <th>Model</th>
-                            <th onClick = {() => sort("price")}>Price</th>
+							<th>Model</th>
+							<th>Price</th>
 							<th>Miles</th>
 							<th>Color</th>
 							<th>Vin</th>
 						</tr>
-                    </thead>
-                    
-					{cars.map((car) => {
-						return (
-							<React.Fragment>
-								<tbody>
-									<tr className='table-row' key={car._id}>
-										<th scope='row'>{car.year}</th>
-										<td>{car.make}</td>
-                                        <td>{car.model}</td>
-                                        <td>${car.price.toLocaleString("USD")}</td>
-										<td>{car.miles.toLocaleString()}</td>
-										<td>{car.color}</td>
-										<td>{car.vin}</td>
-									</tr>
-								</tbody>
-							</React.Fragment>
-						);
-					})}
+					</thead>
+					<tbody>
+						{cars.map((car) => {
+							return (
+								<tr key={car._id} className='table-row'>
+									<th scope='row'>{car.year}</th>
+									<td>{car.make}</td>
+									<td>{car.model}</td>
+									<td>${car.price.toLocaleString('USD')}</td>
+									<td>{car.miles.toLocaleString()}</td>
+									<td>{car.color}</td>
+									<td>{car.vin}</td>
+								</tr>
+							);
+						})}
+					</tbody>
 				</Table>
 			</div>
 		</div>
